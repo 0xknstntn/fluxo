@@ -5,13 +5,16 @@ package _0xknstntn.fluxo.oracle;
 import "gogoproto/gogo.proto";
 import "fluxo/oracle/params.proto";
 import "fluxo/oracle/request.proto";
+import "fluxo/oracle/validator.proto";
 
 option go_package = "github.com/0xknstntn/fluxo/x/oracle/types";
 
 // GenesisState defines the oracle module's genesis state.
 message GenesisState {
-           Params  params       = 1 [(gogoproto.nullable) = false];
-  repeated Request requestList  = 2 [(gogoproto.nullable) = false];
-           uint64  requestCount = 3;
+           Params    params         = 1 [(gogoproto.nullable) = false];
+  repeated Request   requestList    = 2 [(gogoproto.nullable) = false];
+           uint64    requestCount   = 3;
+  repeated Validator validatorList  = 4 [(gogoproto.nullable) = false];
+           uint64    validatorCount = 5;
 }
 

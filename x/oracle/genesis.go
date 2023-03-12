@@ -15,6 +15,13 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Set request count
 	k.SetRequestCount(ctx, genState.RequestCount)
+	// Set all the validator
+	for _, elem := range genState.ValidatorList {
+		k.SetValidator(ctx, elem)
+	}
+
+	// Set validator count
+	k.SetValidatorCount(ctx, genState.ValidatorCount)
 	// this line is used by starport scaffolding # genesis/module/init
 	k.SetParams(ctx, genState.Params)
 }
@@ -26,6 +33,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 
 	genesis.RequestList = k.GetAllRequest(ctx)
 	genesis.RequestCount = k.GetRequestCount(ctx)
+	genesis.ValidatorList = k.GetAllValidator(ctx)
+	genesis.ValidatorCount = k.GetValidatorCount(ctx)
 	// this line is used by starport scaffolding # genesis/module/export
 
 	return genesis

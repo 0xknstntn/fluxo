@@ -7,6 +7,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "fluxo/oracle/params.proto";
 import "fluxo/oracle/request.proto";
+import "fluxo/oracle/validator.proto";
 
 option go_package = "github.com/0xknstntn/fluxo/x/oracle/types";
 
@@ -26,6 +27,16 @@ service Query {
   }
   rpc RequestAll (QueryAllRequestRequest) returns (QueryAllRequestResponse) {
     option (google.api.http).get = "/0xknstntn/fluxo/oracle/request";
+  
+  }
+  
+  // Queries a list of Validator items.
+  rpc Validator    (QueryGetValidatorRequest) returns (QueryGetValidatorResponse) {
+    option (google.api.http).get = "/0xknstntn/fluxo/oracle/validator/{id}";
+  
+  }
+  rpc ValidatorAll (QueryAllValidatorRequest) returns (QueryAllValidatorResponse) {
+    option (google.api.http).get = "/0xknstntn/fluxo/oracle/validator";
   
   }
 }
@@ -53,6 +64,23 @@ message QueryAllRequestRequest {
 
 message QueryAllRequestResponse {
   repeated Request                                Request    = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetValidatorRequest {
+  uint64 id = 1;
+}
+
+message QueryGetValidatorResponse {
+  Validator Validator = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllValidatorRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllValidatorResponse {
+  repeated Validator                              Validator  = 1 [(gogoproto.nullable) = false];
            cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 

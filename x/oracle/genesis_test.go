@@ -23,6 +23,15 @@ func TestGenesis(t *testing.T) {
 			},
 		},
 		RequestCount: 2,
+		ValidatorList: []types.Validator{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		ValidatorCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -36,5 +45,7 @@ func TestGenesis(t *testing.T) {
 
 	require.ElementsMatch(t, genesisState.RequestList, got.RequestList)
 	require.Equal(t, genesisState.RequestCount, got.RequestCount)
+	require.ElementsMatch(t, genesisState.ValidatorList, got.ValidatorList)
+	require.Equal(t, genesisState.ValidatorCount, got.ValidatorCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

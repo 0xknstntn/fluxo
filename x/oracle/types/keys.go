@@ -22,3 +22,8 @@ const (
 	RequestKey      = "Request/value/"
 	RequestCountKey = "Request/count/"
 )
+
+const (
+	ValidatorKey      = "Validator/value/"
+	ValidatorCountKey = "Validator/count/"
+)
