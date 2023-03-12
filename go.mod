@@ -1,6 +1,6 @@
 module github.com/0xknstntn/fluxo
 
-go 1.19
+go 1.18
 
 require (
 	github.com/cosmos/cosmos-sdk v0.46.7
