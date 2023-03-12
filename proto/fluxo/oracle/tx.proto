@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package _0xknstntn.fluxo.oracle;
+
+option go_package = "github.com/0xknstntn/fluxo/x/oracle/types";
+
+// Msg defines the Msg service.
+service Msg {
+  rpc CreateRequest (MsgCreateRequest) returns (MsgCreateRequestResponse);
+}
+message MsgCreateRequest {
+  string creator = 1;
+  string price   = 2;
+}
+
+message MsgCreateRequestResponse {}
+

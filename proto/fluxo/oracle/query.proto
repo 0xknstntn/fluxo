@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package _0xknstntn.fluxo.oracle;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "fluxo/oracle/params.proto";
+import "fluxo/oracle/request.proto";
+
+option go_package = "github.com/0xknstntn/fluxo/x/oracle/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  
+  // Parameters queries the parameters of the module.
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/0xknstntn/fluxo/oracle/params";
+  
+  }
+  
+  // Queries a list of Request items.
+  rpc Request    (QueryGetRequestRequest) returns (QueryGetRequestResponse) {
+    option (google.api.http).get = "/0xknstntn/fluxo/oracle/request/{id}";
+  
+  }
+  rpc RequestAll (QueryAllRequestRequest) returns (QueryAllRequestResponse) {
+    option (google.api.http).get = "/0xknstntn/fluxo/oracle/request";
+  
+  }
+}
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  
+  // params holds all the parameters of this module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryGetRequestRequest {
+  uint64 id = 1;
+}
+
+message QueryGetRequestResponse {
+  Request Request = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllRequestRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllRequestResponse {
+  repeated Request                                Request    = 1 [(gogoproto.nullable) = false];
+           cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+

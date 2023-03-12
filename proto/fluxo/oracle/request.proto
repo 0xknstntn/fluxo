@@ -1,0 +1,10 @@
+syntax = "proto3";
+package _0xknstntn.fluxo.oracle;
+
+option go_package = "github.com/0xknstntn/fluxo/x/oracle/types";
+
+message Request {
+  uint64 id = 1;
+  string price = 2; 
+  
+}
