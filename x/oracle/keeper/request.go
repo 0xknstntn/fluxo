@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/binary"
+	"strconv"
 
 	"github.com/0xknstntn/fluxo/x/oracle/types"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
@@ -69,6 +70,19 @@ func (k Keeper) GetRequest(ctx sdk.Context, id uint64) (val types.Request, found
 	}
 	k.cdc.MustUnmarshal(b, &val)
 	return val, true
+}
+
+func (k Keeper) GetPrice(ctx sdk.Context) uint64 {
+	count := k.GetRequestCount(ctx)
+	req, found := k.GetRequest(ctx, count-1)
+	if found == false {
+		panic(found)
+	}
+	price, err := strconv.Atoi(req.Price)
+	if err != nil {
+		panic(err)
+	}
+	return uint64(price)
 }
 
 // RemoveRequest removes a request from the store

@@ -27,7 +27,7 @@ func (k msgServer) ValidatorRegistration(goCtx context.Context, msg *types.MsgVa
 	}
 	coinString := cast.ToString(30) + denom*/
 
-	stake, err := sdk.ParseCoinsNormalized("30token")
+	stake, err := sdk.ParseCoinsNormalized("30fluxo")
 	if err != nil {
 		panic(err)
 	}

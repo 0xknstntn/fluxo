@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package _0xknstntn.fluxo.maker;
+
+import "gogoproto/gogo.proto";
+import "fluxo/maker/params.proto";
+
+option go_package = "github.com/0xknstntn/fluxo/x/maker/types";
+
+// GenesisState defines the maker module's genesis state.
+message GenesisState {
+  Params params  = 1 [(gogoproto.nullable) = false];
+  string port_id = 2;
+}
+

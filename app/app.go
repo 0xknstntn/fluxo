@@ -107,6 +107,10 @@ import (
 	oraclemodulekeeper "github.com/0xknstntn/fluxo/x/oracle/keeper"
 	oraclemoduletypes "github.com/0xknstntn/fluxo/x/oracle/types"
 
+	makermodule "github.com/0xknstntn/fluxo/x/maker"
+	makermodulekeeper "github.com/0xknstntn/fluxo/x/maker/keeper"
+	makermoduletypes "github.com/0xknstntn/fluxo/x/maker/types"
+
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	appparams "github.com/0xknstntn/fluxo/app/params"
@@ -166,6 +170,7 @@ var (
 		ica.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		oraclemodule.AppModuleBasic{},
+		makermodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -180,6 +185,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		oraclemoduletypes.ModuleName:   {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		makermoduletypes.ModuleName:    {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -240,7 +246,9 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper  capabilitykeeper.ScopedKeeper
 
-	OracleKeeper oraclemodulekeeper.Keeper
+	OracleKeeper      oraclemodulekeeper.Keeper
+	ScopedMakerKeeper capabilitykeeper.ScopedKeeper
+	MakerKeeper       makermodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -286,6 +294,7 @@ func New(
 		ibctransfertypes.StoreKey, icahosttypes.StoreKey, capabilitytypes.StoreKey, group.StoreKey,
 		icacontrollertypes.StoreKey,
 		oraclemoduletypes.StoreKey,
+		makermoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -506,6 +515,22 @@ func New(
 	)
 	oracleModule := oraclemodule.NewAppModule(appCodec, app.OracleKeeper, app.AccountKeeper, app.BankKeeper)
 
+	scopedMakerKeeper := app.CapabilityKeeper.ScopeToModule(makermoduletypes.ModuleName)
+	app.ScopedMakerKeeper = scopedMakerKeeper
+	app.MakerKeeper = *makermodulekeeper.NewKeeper(
+		appCodec,
+		keys[makermoduletypes.StoreKey],
+		keys[makermoduletypes.MemStoreKey],
+		app.GetSubspace(makermoduletypes.ModuleName),
+		app.IBCKeeper.ChannelKeeper,
+		&app.IBCKeeper.PortKeeper,
+		scopedMakerKeeper,
+		app.BankKeeper,
+		app.OracleKeeper,
+	)
+	makerModule := makermodule.NewAppModule(appCodec, app.MakerKeeper, app.AccountKeeper, app.BankKeeper, app.OracleKeeper)
+
+	makerIBCModule := makermodule.NewIBCModule(app.MakerKeeper)
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	/**** IBC Routing ****/
@@ -517,6 +542,7 @@ func New(
 	ibcRouter := ibcporttypes.NewRouter()
 	ibcRouter.AddRoute(icahosttypes.SubModuleName, icaHostIBCModule).
 		AddRoute(ibctransfertypes.ModuleName, transferIBCModule)
+	ibcRouter.AddRoute(makermoduletypes.ModuleName, makerIBCModule)
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
 
@@ -572,6 +598,7 @@ func New(
 		transferModule,
 		icaModule,
 		oracleModule,
+		makerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -602,6 +629,7 @@ func New(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		oraclemoduletypes.ModuleName,
+		makermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -627,6 +655,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		oraclemoduletypes.ModuleName,
+		makermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	)
 
@@ -657,6 +686,7 @@ func New(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		oraclemoduletypes.ModuleName,
+		makermoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -687,6 +717,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		oracleModule,
+		makerModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -892,6 +923,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	paramsKeeper.Subspace(oraclemoduletypes.ModuleName)
+	paramsKeeper.Subspace(makermoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper

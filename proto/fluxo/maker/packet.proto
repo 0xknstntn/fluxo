@@ -1,0 +1,13 @@
+syntax = "proto3";
+package _0xknstntn.fluxo.maker;
+
+option go_package = "github.com/0xknstntn/fluxo/x/maker/types";
+
+message MakerPacketData {
+    oneof packet {
+        NoData noData = 1;
+    }
+}
+
+message NoData {
+}
